@@ -15,6 +15,11 @@ class MobileBookReader {
         this.minScale = 1;
         this.maxScale = 3;
         
+        // 画像比率固定システム
+        this.aspectRatio = null;
+        this.optimalSizes = null;
+        this.isImageSizeCalculated = false;
+        
         this.init();
     }
     
@@ -135,51 +140,102 @@ class MobileBookReader {
     }
     
     setupImageOptimization() {
-        // 画像読み込み完了時の最適化処理
-        const optimizeOnLoad = (img) => {
+        // 最初の画像読み込み完了時に比率を計算・固定
+        const calculateAspectRatioOnce = (img) => {
             img.addEventListener('load', () => {
-                this.optimizeForCurrentViewport();
-                
-                // 画像サイズに基づく動的調整
-                if (img.naturalWidth && img.naturalHeight) {
-                    this.adjustImageForScreen(img);
+                if (!this.isImageSizeCalculated && img.naturalWidth && img.naturalHeight) {
+                    // 比率を一度だけ計算
+                    this.aspectRatio = img.naturalWidth / img.naturalHeight;
+                    this.calculateOptimalSizes();
+                    this.isImageSizeCalculated = true;
+                    
+                    console.log('画像比率固定:', this.aspectRatio, this.optimalSizes);
+                    
+                    // 全ての画像に固定サイズを適用
+                    this.applyFixedSizes();
                 }
             });
         };
         
-        if (this.leftPageImg) optimizeOnLoad(this.leftPageImg);
-        if (this.rightPageImg) optimizeOnLoad(this.rightPageImg);
+        // 最初の画像（左ページ）でのみ計算
+        if (this.leftPageImg) {
+            calculateAspectRatioOnce(this.leftPageImg);
+        }
+        
+        // 右ページは読み込み完了時に固定サイズを適用するだけ
+        if (this.rightPageImg) {
+            this.rightPageImg.addEventListener('load', () => {
+                if (this.isImageSizeCalculated) {
+                    this.applyFixedSizes();
+                }
+            });
+        }
     }
     
-    adjustImageForScreen(img) {
+    calculateOptimalSizes() {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         const isLandscape = screenWidth > screenHeight;
         
-        // 画像の自然なサイズ
-        const naturalRatio = img.naturalWidth / img.naturalHeight;
-        
-        // 最適サイズの計算
+        // 最適サイズの計算（一度だけ）
         let maxWidth, maxHeight;
         
         if (isLandscape) {
-            maxWidth = Math.floor((screenWidth - 40) / 2); // マージン考慮
-            maxHeight = screenHeight - 100; // コントロール考慮
+            maxWidth = Math.floor((screenWidth - 20) / 2); // マージン最小化
+            maxHeight = screenHeight - 80; // コントロール考慮
         } else {
-            maxWidth = Math.floor((screenWidth - 20) / 2);
-            maxHeight = screenHeight - 200; // ヘッダー・コントロール考慮
+            maxWidth = Math.floor((screenWidth - 16) / 2); // 隙間なし用マージン最小化
+            maxHeight = screenHeight - 180; // ヘッダー・コントロール考慮
         }
         
         // アスペクト比を維持した最適サイズ
-        const widthByHeight = maxHeight * naturalRatio;
-        const heightByWidth = maxWidth / naturalRatio;
+        const widthByHeight = maxHeight * this.aspectRatio;
+        const heightByWidth = maxWidth / this.aspectRatio;
         
         if (widthByHeight <= maxWidth) {
-            img.style.width = `${widthByHeight}px`;
-            img.style.height = `${maxHeight}px`;
+            this.optimalSizes = {
+                width: Math.floor(widthByHeight),
+                height: Math.floor(maxHeight)
+            };
         } else {
-            img.style.width = `${maxWidth}px`;
-            img.style.height = `${heightByWidth}px`;
+            this.optimalSizes = {
+                width: Math.floor(maxWidth),
+                height: Math.floor(heightByWidth)
+            };
+        }
+        
+        // 最小サイズ保証
+        this.optimalSizes.width = Math.max(this.optimalSizes.width, 120);
+        this.optimalSizes.height = Math.max(this.optimalSizes.height, 160);
+    }
+    
+    applyFixedSizes() {
+        if (!this.optimalSizes) return;
+        
+        // 左右両方の画像に固定サイズを適用
+        [this.leftPageImg, this.rightPageImg].forEach(img => {
+            if (img) {
+                img.style.width = `${this.optimalSizes.width}px`;
+                img.style.height = `${this.optimalSizes.height}px`;
+                img.style.maxWidth = 'none'; // max-width制限を解除
+                img.style.maxHeight = 'none'; // max-height制限を解除
+            }
+        });
+        
+        // 見開きコンテナサイズも固定
+        if (this.pageSpread) {
+            this.pageSpread.style.width = `${this.optimalSizes.width * 2}px`;
+            this.pageSpread.style.height = `${this.optimalSizes.height}px`;
+            this.pageSpread.style.maxWidth = 'none';
+            this.pageSpread.style.maxHeight = 'none';
+        }
+    }
+    
+    // 向き変更時の再計算（必要に応じて）
+    handleOrientationChange() {
+        if (this.aspectRatio) {
+            this.calculateOptimalSizes();
+            this.applyFixedSizes();
         }
     }
     
@@ -350,6 +406,19 @@ class MobileBookReader {
         // 自動非表示用
         this.bookContainer.addEventListener('mousemove', () => this.resetAutoHide());
         this.bookContainer.addEventListener('touchstart', () => this.resetAutoHide());
+        
+        // 向き変更時の処理
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.handleOrientationChange();
+            }, 500);
+        });
+        
+        window.addEventListener('resize', () => {
+            if (this.aspectRatio) {
+                this.handleOrientationChange();
+            }
+        });
     }
     
     initGestures() {
@@ -416,13 +485,16 @@ class MobileBookReader {
     }
     
     playPageTurnAnimation(direction) {
-        // アニメーションクラスをリセット
+        // チラつき防止：サイズ変更を行わずアニメーションのみ
         this.pageSpread.classList.remove('slide-in-left', 'slide-in-right');
         
-        // フェードアウト
+        // GPU加速のtransformベースアニメーション
         this.pageSpread.style.opacity = '0';
         
         setTimeout(() => {
+            // ページ変更とサイズ適用を同時実行
+            this.applyFixedSizes(); // 固定サイズ再適用
+            
             // アニメーション方向を設定
             if (direction === 'next') {
                 this.pageSpread.classList.add('slide-in-right');
@@ -435,8 +507,8 @@ class MobileBookReader {
             // アニメーション完了後にクラスを削除
             setTimeout(() => {
                 this.pageSpread.classList.remove('slide-in-left', 'slide-in-right');
-            }, 400);
-        }, 150);
+            }, 300); // アニメーション時間短縮
+        }, 100); // 待機時間短縮
     }
     
     updatePageInfo() {

@@ -14,7 +14,7 @@ class BookDataManager {
     async loadBooksData() {
         try {
             // 書籍リストの定義（実際の環境では動的に取得）
-            const bookIds = ['book1']; // 今後追加される書籍のIDをここに追加
+            const bookIds = ['book1', 'book2']; // 今後追加される書籍のIDをここに追加
             
             for (const bookId of bookIds) {
                 try {

@@ -191,6 +191,75 @@
     display: none;
 }
 
+/* 最近読んだ本専用のカードスタイル */
+.recent-books .book-card {
+    flex-shrink: 0;
+    width: 120px;
+    min-height: 180px;
+}
+
+.recent-books .book-thumbnail {
+    aspect-ratio: 3/4;
+    height: 120px;
+}
+
+.recent-books .book-info {
+    padding: 10px;
+}
+
+.recent-books .book-title {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+    height: 32px;
+    margin-bottom: 6px;
+}
+
+.recent-books .book-author {
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.recent-books .book-details {
+    font-size: 10px;
+}
+
+/* スマホでの最近読んだ本の調整 */
+@media (max-width: 768px) {
+    .recent-books .book-card {
+        width: 110px;
+        min-height: 170px;
+    }
+    
+    .recent-books .book-thumbnail {
+        height: 110px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recent-books {
+        gap: 12px;
+        padding: 0 15px;
+    }
+    
+    .recent-books .book-card {
+        width: 100px;
+        min-height: 160px;
+    }
+    
+    .recent-books .book-thumbnail {
+        height: 100px;
+    }
+    
+    .recent-books .book-info {
+        padding: 8px;
+    }
+    
+    .recent-books .book-title {
+        font-size: 12px;
+        height: 30px;
+    }
+}
+
 /* 書籍グリッド */
 .library-main {
     max-width: 1200px;
@@ -202,6 +271,23 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 20px;
     padding: 0 20px;
+}
+
+/* スマホ用2列表示 */
+@media (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 0 12px;
+    }
 }
 
 /* 書籍カード */
@@ -467,10 +553,7 @@
         font-size: 14px;
     }
     
-    .books-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
-    }
+    /* 既に上で定義済みなのでここは削除 */
     
     .book-title {
         font-size: 14px;
@@ -502,11 +585,7 @@
         padding: 15px;
     }
     
-    .books-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-        gap: 12px;
-        padding: 0 15px;
-    }
+    /* 2列表示は上で既に定義済み */
     
     .section-title {
         padding: 0 15px;
@@ -515,6 +594,15 @@
     
     .recent-books {
         padding: 0 15px;
+    }
+    
+    /* 2列表示用のカード調整 */
+    .book-card {
+        min-height: 200px;
+    }
+    
+    .book-thumbnail {
+        aspect-ratio: 3/4.5; /* より縦長に調整 */
     }
 }
 

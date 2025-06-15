@@ -1,5 +1,5 @@
 // Service Worker for Book Library PWA with Viewport Optimization
-const CACHE_NAME = 'book-library-v3';
+const CACHE_NAME = 'book-library-v4';
 const urlsToCache = [
     './',
     './index.html',
@@ -20,7 +20,12 @@ const urlsToCache = [
     './books/book1/b2.png',
     './books/book1/b3.png',
     './books/book1/b4.png',
-    './books/book1/metadata.json'
+    './books/book1/metadata.json',
+    './books/book2/b1.png',
+    './books/book2/b2.png',
+    './books/book2/b3.png',
+    './books/book2/b4.png',
+    './books/book2/metadata.json'
 ];
 
 // インストール時にキャッシュ
