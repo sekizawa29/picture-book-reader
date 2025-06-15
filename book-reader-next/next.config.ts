@@ -12,8 +12,12 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'export', // 静的エクスポート
+  trailingSlash: true, // GitHub Pages対応
+  basePath: process.env.NODE_ENV === 'production' ? '/picture-book-reader' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/picture-book-reader/' : '',
   images: {
-    unoptimized: true, // 既存の画像ファイルをそのまま使用
+    unoptimized: true, // 静的エクスポート時は必須
   },
 }
 
