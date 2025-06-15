@@ -23,6 +23,7 @@ class MobileBookReader {
         this.initElements();
         this.initEventListeners();
         this.initGestures();
+        this.initViewportOptimization();
         
         await this.loadBookData();
         this.preloadImages();
@@ -51,6 +52,143 @@ class MobileBookReader {
         this.prevArea = document.getElementById('prevArea');
         this.nextArea = document.getElementById('nextArea');
         this.backToLibraryBtn = document.getElementById('backToLibraryBtn');
+    }
+    
+    initViewportOptimization() {
+        // ViewportManagerとの連携
+        if (window.viewportManager) {
+            // ビューポート更新イベントのリスナー
+            window.addEventListener('viewportUpdated', (e) => {
+                this.handleViewportUpdate(e.detail);
+            });
+            
+            // 初回のビューポート最適化
+            this.optimizeForCurrentViewport();
+        }
+        
+        // 画像読み込み完了時の最適化
+        this.setupImageOptimization();
+    }
+    
+    handleViewportUpdate(detail) {
+        // ビューポート変更時の処理
+        this.optimizeImageDisplay(detail);
+        
+        // フルスクリーン状態での特別処理
+        if (this.isFullscreen) {
+            this.optimizeForFullscreen(detail);
+        }
+    }
+    
+    optimizeForCurrentViewport() {
+        if (!window.viewportManager) return;
+        
+        const sizes = window.viewportManager.getOptimalSizes();
+        this.applyOptimalSizes(sizes);
+    }
+    
+    optimizeImageDisplay(viewportDetail) {
+        if (!this.pageSpread) return;
+        
+        const { safeHeight, safeWidth, orientation, spreadOptimization } = viewportDetail;
+        
+        // 動的スタイル適用
+        this.pageSpread.style.maxWidth = `${spreadOptimization.maxWidth * 2 + 10}px`;
+        this.pageSpread.style.maxHeight = `${spreadOptimization.maxHeight}px`;
+        
+        // 左右ページの最適化
+        if (this.leftPageImg && this.rightPageImg) {
+            [this.leftPageImg, this.rightPageImg].forEach(img => {
+                img.style.maxWidth = `${spreadOptimization.maxWidth}px`;
+                img.style.maxHeight = `${spreadOptimization.maxHeight}px`;
+            });
+        }
+        
+        // アスペクト比に基づく調整
+        this.adjustForAspectRatio(spreadOptimization);
+    }
+    
+    adjustForAspectRatio(optimization) {
+        // 画像のアスペクト比を取得して最適化
+        if (this.leftPageImg && this.leftPageImg.complete) {
+            const aspectRatio = this.leftPageImg.naturalWidth / this.leftPageImg.naturalHeight;
+            const optimalWidth = Math.min(optimization.maxWidth, optimization.maxHeight * aspectRatio);
+            const optimalHeight = Math.min(optimization.maxHeight, optimization.maxWidth / aspectRatio);
+            
+            [this.leftPageImg, this.rightPageImg].forEach(img => {
+                if (img) {
+                    img.style.width = `${optimalWidth}px`;
+                    img.style.height = `${optimalHeight}px`;
+                }
+            });
+        }
+    }
+    
+    optimizeForFullscreen(viewportDetail) {
+        // フルスクリーン時の特別最適化
+        const { safeWidth, safeHeight } = viewportDetail;
+        
+        if (this.pageSpread) {
+            this.pageSpread.style.maxWidth = `${safeWidth - 10}px`;
+            this.pageSpread.style.maxHeight = `${safeHeight - 10}px`;
+        }
+    }
+    
+    setupImageOptimization() {
+        // 画像読み込み完了時の最適化処理
+        const optimizeOnLoad = (img) => {
+            img.addEventListener('load', () => {
+                this.optimizeForCurrentViewport();
+                
+                // 画像サイズに基づく動的調整
+                if (img.naturalWidth && img.naturalHeight) {
+                    this.adjustImageForScreen(img);
+                }
+            });
+        };
+        
+        if (this.leftPageImg) optimizeOnLoad(this.leftPageImg);
+        if (this.rightPageImg) optimizeOnLoad(this.rightPageImg);
+    }
+    
+    adjustImageForScreen(img) {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const isLandscape = screenWidth > screenHeight;
+        
+        // 画像の自然なサイズ
+        const naturalRatio = img.naturalWidth / img.naturalHeight;
+        
+        // 最適サイズの計算
+        let maxWidth, maxHeight;
+        
+        if (isLandscape) {
+            maxWidth = Math.floor((screenWidth - 40) / 2); // マージン考慮
+            maxHeight = screenHeight - 100; // コントロール考慮
+        } else {
+            maxWidth = Math.floor((screenWidth - 20) / 2);
+            maxHeight = screenHeight - 200; // ヘッダー・コントロール考慮
+        }
+        
+        // アスペクト比を維持した最適サイズ
+        const widthByHeight = maxHeight * naturalRatio;
+        const heightByWidth = maxWidth / naturalRatio;
+        
+        if (widthByHeight <= maxWidth) {
+            img.style.width = `${widthByHeight}px`;
+            img.style.height = `${maxHeight}px`;
+        } else {
+            img.style.width = `${maxWidth}px`;
+            img.style.height = `${heightByWidth}px`;
+        }
+    }
+    
+    applyOptimalSizes(sizes) {
+        if (!sizes || !this.pageSpread) return;
+        
+        // CSS変数が利用可能な場合は適用
+        this.pageSpread.style.maxWidth = sizes.maxWidth;
+        this.pageSpread.style.maxHeight = sizes.maxHeight;
     }
     
     parseUrlParameters() {
@@ -172,6 +310,27 @@ class MobileBookReader {
         
         // ヘルプ
         this.hideHelpBtn.addEventListener('click', () => this.hideHelp());
+        
+        // デバッグボタン
+        const toggleDebugBtn = document.getElementById('toggleDebug');
+        const emergencyModeBtn = document.getElementById('emergencyMode');
+        
+        if (toggleDebugBtn) {
+            toggleDebugBtn.addEventListener('click', () => {
+                if (window.toggleViewportDebug) {
+                    window.toggleViewportDebug();
+                }
+            });
+        }
+        
+        if (emergencyModeBtn) {
+            emergencyModeBtn.addEventListener('click', () => {
+                if (window.enableEmergencyDisplayMode) {
+                    window.enableEmergencyDisplayMode();
+                    this.showError('緊急表示モードを有効にしました');
+                }
+            });
+        }
         
         // キーボードショートカット
         document.addEventListener('keydown', (e) => this.handleKeydown(e));

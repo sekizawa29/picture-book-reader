@@ -94,13 +94,21 @@ body {
     overflow: hidden;
 }
 
-/* 見開き表示コンテナ */
+/* 見開き表示コンテナ（最適化版を優先、フォールバック対応） */
 .spread-container {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* ViewportManager利用時 */
+    width: var(--vw-safe, 100%);
+    height: var(--vh-safe, 100%);
+    
+    /* フォールバック */
+    min-height: 400px;
+    max-height: 100vh;
 }
 
 .page-spread {
@@ -111,27 +119,38 @@ body {
     max-width: 100%;
     max-height: 100%;
     transition: transform 0.3s ease;
+    
+    /* ViewportManager利用時 */
+    max-width: calc(var(--page-max-width, 49vw) * 2 + 10px);
+    max-height: var(--page-max-height, 100vh);
 }
 
 .page-image {
-    max-height: 100vh;
     width: auto;
     height: auto;
     object-fit: contain;
     touch-action: pinch-zoom;
     transition: transform 0.3s ease;
+    
+    /* ViewportManager利用時 */
+    max-width: var(--page-max-width, 49vw);
+    max-height: var(--page-max-height, 100vh);
+    
+    /* フォールバック */
+    max-width: 48vw;
+    max-height: 85vh;
 }
 
 .left-page {
-    max-width: 49vw;
     flex: 1;
-    border-right: 1px solid rgba(0,0,0,0.1); /* デバッグ用境界線 */
+    /* デバッグ用境界線（本番では削除可能） */
+    border-right: 1px solid rgba(0,0,0,0.1);
 }
 
 .right-page {
-    max-width: 49vw;
     flex: 1;
-    border-left: 1px solid rgba(0,0,0,0.1); /* デバッグ用境界線 */
+    /* デバッグ用境界線（本番では削除可能） */
+    border-left: 1px solid rgba(0,0,0,0.1);
 }
 
 /* 横向き時の見開き最適化 */
@@ -296,6 +315,34 @@ body {
 }
 
 .help-btn:active {
+    transform: translateY(0);
+}
+
+/* デバッグボタン */
+.help-debug {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.debug-btn {
+    background: #2196F3;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 16px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.debug-btn:hover {
+    background: #1976D2;
+    transform: translateY(-1px);
+}
+
+.debug-btn:active {
     transform: translateY(0);
 }
 

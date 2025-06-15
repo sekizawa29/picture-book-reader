@@ -1,5 +1,5 @@
-// Service Worker for Book Library PWA
-const CACHE_NAME = 'book-library-v2';
+// Service Worker for Book Library PWA with Viewport Optimization
+const CACHE_NAME = 'book-library-v3';
 const urlsToCache = [
     './',
     './index.html',
@@ -8,11 +8,14 @@ const urlsToCache = [
     './css/mobile.css',
     './css/fullscreen.css',
     './css/library.css',
+    './css/viewport-optimized.css',
     './js/mobile-reader.js',
     './js/gesture.js',
     './js/pwa.js',
     './js/library.js',
     './js/book-data.js',
+    './js/viewport-manager.js',
+    './js/fallback-handler.js',
     './books/book1/b1.png',
     './books/book1/b2.png',
     './books/book1/b3.png',

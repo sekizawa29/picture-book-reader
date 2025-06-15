@@ -15,6 +15,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/mobile.css">
     <link rel="stylesheet" href="css/fullscreen.css">
+    <link rel="stylesheet" href="css/viewport-optimized.css">
     
     <!-- Preload first images -->
     <link rel="preload" href="images/b1.png" as="image">
@@ -60,12 +61,18 @@
                 <p>• 画面左半分をタップ → 前のページ</p>
                 <p>• 左右にスワイプでページめくり</p>
                 <p>• ピンチで文字を拡大・縮小</p>
+                <div class="help-debug">
+                    <button id="toggleDebug" class="debug-btn">表示デバッグ</button>
+                    <button id="emergencyMode" class="debug-btn">緊急モード</button>
+                </div>
                 <button id="hideHelp" class="help-btn">始める</button>
             </div>
         </div>
     </div>
     
     <!-- JavaScript -->
+    <script src="js/viewport-manager.js"></script>
+    <script src="js/fallback-handler.js"></script>
     <script src="js/book-data.js"></script>
     <script src="js/mobile-reader.js"></script>
     <script src="js/gesture.js"></script>
