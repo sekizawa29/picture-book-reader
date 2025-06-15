@@ -1,0 +1,152 @@
+/* フルスクリーン専用スタイル */
+
+/* フルスクリーン時の基本設定 */
+:fullscreen {
+    background: #000;
+}
+
+:-webkit-full-screen {
+    background: #000;
+}
+
+:-moz-full-screen {
+    background: #000;
+}
+
+:-ms-fullscreen {
+    background: #000;
+}
+
+/* フルスクリーン時のコンテナ */
+.book-container:fullscreen,
+.book-container:-webkit-full-screen,
+.book-container:-moz-full-screen,
+.book-container:-ms-fullscreen {
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* フルスクリーン時の見開き表示 */
+.book-container:fullscreen .page-image,
+.book-container:-webkit-full-screen .page-image,
+.book-container:-moz-full-screen .page-image,
+.book-container:-ms-fullscreen .page-image {
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* フルスクリーン時の見開き最適化 */
+.book-container:fullscreen .left-page,
+.book-container:fullscreen .right-page,
+.book-container:-webkit-full-screen .left-page,
+.book-container:-webkit-full-screen .right-page,
+.book-container:-moz-full-screen .left-page,
+.book-container:-moz-full-screen .right-page,
+.book-container:-ms-fullscreen .left-page,
+.book-container:-ms-fullscreen .right-page {
+    max-width: 50vw;
+}
+
+/* フルスクリーン時のコントロール */
+.book-container:fullscreen .controls,
+.book-container:-webkit-full-screen .controls,
+.book-container:-moz-full-screen .controls,
+.book-container:-ms-fullscreen .controls {
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+}
+
+.book-container:fullscreen .control-btn,
+.book-container:-webkit-full-screen .control-btn,
+.book-container:-moz-full-screen .control-btn,
+.book-container:-ms-fullscreen .control-btn {
+    background: rgba(255, 152, 0, 0.8);
+}
+
+/* フルスクリーン自動非表示コントロール */
+.auto-hide-controls .controls {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.auto-hide-controls .control-btn {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.auto-hide-controls:hover .controls,
+.auto-hide-controls.show-controls .controls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.auto-hide-controls:hover .control-btn,
+.auto-hide-controls.show-controls .control-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* iPhone Safari の特別対応 */
+@supports (-webkit-touch-callout: none) {
+    .book-container {
+        /* iPhone のホームインジケーター対応 */
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .controls {
+        bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ノッチ対応 */
+@media screen and (orientation: landscape) {
+    .book-container {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    .control-btn {
+        right: calc(20px + env(safe-area-inset-right));
+        top: calc(20px + env(safe-area-inset-top));
+    }
+}
+
+/* 没入型体験のための追加スタイル */
+.immersive-mode {
+    overflow: hidden;
+}
+
+.immersive-mode .page-image {
+    cursor: none;
+}
+
+.immersive-mode .touch-area {
+    cursor: none;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+    }
+    
+    .book-container {
+        background: #000;
+    }
+    
+    .controls {
+        background: rgba(0,0,0,0.9);
+        color: white;
+    }
+    
+    .help-content {
+        background: #1a1a1a;
+        color: white;
+    }
+}

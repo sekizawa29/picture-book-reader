@@ -1,0 +1,620 @@
+/* 本棚専用スタイル */
+
+/* ライブラリアプリのルート設定 */
+.library-app {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding-bottom: 80px; /* フローティングボタン用の余白 */
+}
+
+/* ヘッダー */
+.library-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 20px 0 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.library-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.library-icon {
+    font-size: 32px;
+}
+
+.title-text {
+    font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', sans-serif;
+}
+
+.header-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    font-size: 18px;
+}
+
+/* 検索セクション */
+.search-section {
+    background: white;
+    padding: 20px;
+    margin: -10px 20px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 50;
+}
+
+.search-container {
+    margin-bottom: 15px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 25px;
+    padding: 12px 20px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.search-icon {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #666;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    outline: none;
+    color: #333;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.clear-search-btn {
+    background: #e0e0e0;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.3s ease;
+}
+
+.clear-search-btn:hover {
+    background: #d0d0d0;
+}
+
+/* カテゴリフィルター */
+.category-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.category-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.category-btn:hover:not(.active) {
+    background: #e0e0e0;
+}
+
+.category-icon {
+    font-size: 16px;
+}
+
+/* セクションタイトル */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    padding: 0 20px;
+    color: #333;
+}
+
+.section-icon {
+    font-size: 24px;
+}
+
+/* 最近読んだ本セクション */
+.recent-section {
+    margin-bottom: 30px;
+}
+
+.recent-books {
+    display: flex;
+    gap: 15px;
+    padding: 0 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.recent-books::-webkit-scrollbar {
+    display: none;
+}
+
+/* 最近読んだ本専用のカードスタイル */
+.recent-books .book-card {
+    flex-shrink: 0;
+    width: 120px;
+    min-height: 180px;
+}
+
+.recent-books .book-thumbnail {
+    aspect-ratio: 3/4;
+    height: 120px;
+}
+
+.recent-books .book-info {
+    padding: 10px;
+}
+
+.recent-books .book-title {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+    height: 32px;
+    margin-bottom: 6px;
+}
+
+.recent-books .book-author {
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.recent-books .book-details {
+    font-size: 10px;
+}
+
+/* スマホでの最近読んだ本の調整 */
+@media (max-width: 768px) {
+    .recent-books .book-card {
+        width: 110px;
+        min-height: 170px;
+    }
+    
+    .recent-books .book-thumbnail {
+        height: 110px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recent-books {
+        gap: 12px;
+        padding: 0 15px;
+    }
+    
+    .recent-books .book-card {
+        width: 100px;
+        min-height: 160px;
+    }
+    
+    .recent-books .book-thumbnail {
+        height: 100px;
+    }
+    
+    .recent-books .book-info {
+        padding: 8px;
+    }
+    
+    .recent-books .book-title {
+        font-size: 12px;
+        height: 30px;
+    }
+}
+
+/* 書籍グリッド */
+.library-main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* スマホ用2列表示 */
+@media (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 0 12px;
+    }
+}
+
+/* 書籍カード */
+.book-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.book-card:active {
+    transform: translateY(-2px);
+}
+
+.book-thumbnail {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4; /* 縦長の比率 */
+    overflow: hidden;
+}
+
+.book-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover .book-thumbnail img {
+    transform: scale(1.05);
+}
+
+/* 読書進捗表示 */
+.reading-progress {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.progress-complete {
+    background: #4CAF50;
+}
+
+/* 書籍情報 */
+.book-info {
+    padding: 15px;
+}
+
+.book-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px;
+    line-height: 1.3;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.book-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.book-author {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.book-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+}
+
+.book-pages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.book-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* 読み込み中表示 */
+.loading-indicator {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 検索結果なし */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.no-results-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.no-results h3 {
+    font-size: 24px;
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.no-results p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* フローティングアクションボタン */
+.fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 200;
+}
+
+.fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab:hover {
+    background: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.modal-close:hover {
+    background: #e0e0e0;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .library-title {
+        font-size: 24px;
+    }
+    
+    .library-icon {
+        font-size: 28px;
+    }
+    
+    .header-stats {
+        gap: 15px;
+    }
+    
+    .stat-item {
+        font-size: 14px;
+    }
+    
+    /* 既に上で定義済みなのでここは削除 */
+    
+    .book-title {
+        font-size: 14px;
+    }
+    
+    .book-author {
+        font-size: 12px;
+    }
+    
+    .book-details {
+        font-size: 11px;
+    }
+    
+    .fab-container {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .fab {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-section {
+        margin: -10px 15px 15px;
+        padding: 15px;
+    }
+    
+    /* 2列表示は上で既に定義済み */
+    
+    .section-title {
+        padding: 0 15px;
+        font-size: 20px;
+    }
+    
+    .recent-books {
+        padding: 0 15px;
+    }
+    
+    /* 2列表示用のカード調整 */
+    .book-card {
+        min-height: 200px;
+    }
+    
+    .book-thumbnail {
+        aspect-ratio: 3/4.5; /* より縦長に調整 */
+    }
+}
+
+/* タッチフィードバック強化 */
+@media (hover: none) {
+    .book-card:hover {
+        transform: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .book-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "📚 絵本リーダー",
+  "short_name": "絵本リーダー",
+  "description": "子どもと一緒に絵本を楽しむモバイル最適化リーダー",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#ff9800",
+  "orientation": "portrait-primary"
+}

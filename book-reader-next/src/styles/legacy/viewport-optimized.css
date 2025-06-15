@@ -1,0 +1,256 @@
+/* ビューポート最適化CSS */
+
+/* CSS変数の初期化（JavaScript側で動的更新） */
+:root {
+    --vh-actual: 1vh;
+    --vh-safe: 100vh;
+    --vw-safe: 100vw;
+    --safe-top: 0px;
+    --safe-bottom: 0px;
+    --safe-left: 0px;
+    --safe-right: 0px;
+    --page-max-height: 100vh;
+    --page-max-width: 49vw;
+    --viewport-scale: 1;
+}
+
+/* セーフエリア対応の基本レイアウト */
+body {
+    /* セーフエリアを考慮したパディング */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    
+    /* iOS Safari対応 */
+    padding-top: max(env(safe-area-inset-top), var(--safe-top));
+    padding-bottom: max(env(safe-area-inset-bottom), var(--safe-bottom));
+    padding-left: max(env(safe-area-inset-left), var(--safe-left));
+    padding-right: max(env(safe-area-inset-right), var(--safe-right));
+}
+
+/* 最適化された見開き表示 */
+.spread-container-optimized {
+    width: var(--vw-safe);
+    height: var(--vh-safe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.page-spread-optimized {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    height: 100%;
+    max-width: calc(var(--page-max-width) * 2 + 10px);
+    max-height: var(--page-max-height);
+}
+
+.page-image-optimized {
+    max-width: var(--page-max-width);
+    max-height: var(--page-max-height);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    flex: 1;
+}
+
+/* フルスクリーン時の最適化 */
+.book-container:fullscreen,
+.book-container:-webkit-full-screen,
+.book-container:-moz-full-screen,
+.book-container:-ms-fullscreen {
+    /* セーフエリアを無視してフル活用 */
+    padding: 0 !important;
+}
+
+.book-container:fullscreen .spread-container,
+.book-container:-webkit-full-screen .spread-container,
+.book-container:-moz-full-screen .spread-container,
+.book-container:-ms-fullscreen .spread-container {
+    width: 100vw;
+    height: 100vh;
+    padding: 5px;
+}
+
+.book-container:fullscreen .page-spread,
+.book-container:-webkit-full-screen .page-spread,
+.book-container:-moz-full-screen .page-spread,
+.book-container:-ms-fullscreen .page-spread {
+    gap: 2px;
+}
+
+.book-container:fullscreen .page-image,
+.book-container:-webkit-full-screen .page-image,
+.book-container:-moz-full-screen .page-image,
+.book-container:-ms-fullscreen .page-image {
+    max-width: calc(50vw - 5px);
+    max-height: calc(100vh - 10px);
+}
+
+/* 向き別最適化 */
+@media (orientation: landscape) {
+    .page-spread {
+        flex-direction: row;
+        gap: 6px;
+    }
+    
+    .page-image {
+        max-width: var(--page-max-width);
+        max-height: calc(var(--vh-safe) - 20px);
+    }
+    
+    /* 横向きフルスクリーン時 */
+    .book-container:fullscreen .page-image,
+    .book-container:-webkit-full-screen .page-image,
+    .book-container:-moz-full-screen .page-image,
+    .book-container:-ms-fullscreen .page-image {
+        max-width: calc(50vw - 10px);
+        max-height: 100vh;
+    }
+}
+
+@media (orientation: portrait) {
+    .page-spread {
+        flex-direction: row;
+        gap: 3px;
+    }
+    
+    .page-image {
+        max-width: var(--page-max-width);
+        max-height: var(--page-max-height);
+    }
+    
+    /* 縦向きでの追加調整 */
+    .spread-container {
+        padding: 5px;
+    }
+}
+
+/* 小さな画面での特別対応 */
+@media (max-width: 480px) {
+    .page-spread {
+        gap: 2px;
+    }
+    
+    .spread-container {
+        padding: 3px;
+    }
+    
+    .page-image {
+        max-width: calc(var(--page-max-width) - 5px);
+    }
+}
+
+@media (max-height: 640px) {
+    .page-image {
+        max-height: calc(var(--page-max-height) - 20px);
+    }
+}
+
+/* ノッチ対応デバイス特別設定 */
+@supports (padding: max(0px)) {
+    .book-container {
+        /* セーフエリアの動的適用 */
+        padding-top: max(env(safe-area-inset-top), 10px);
+        padding-bottom: max(env(safe-area-inset-bottom), 10px);
+        padding-left: max(env(safe-area-inset-left), 5px);
+        padding-right: max(env(safe-area-inset-right), 5px);
+    }
+    
+    .book-container:fullscreen,
+    .book-container:-webkit-full-screen,
+    .book-container:-moz-full-screen,
+    .book-container:-ms-fullscreen {
+        padding: 0 !important;
+    }
+}
+
+/* iOS Safari専用調整 */
+@supports (-webkit-touch-callout: none) {
+    /* Safari特有の問題への対応 */
+    .page-image {
+        /* iOS Safariでのflexbox問題回避 */
+        align-self: center;
+    }
+    
+    /* ホームインジケーター対応 */
+    .controls {
+        bottom: max(20px, env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    /* フルスクリーン時の調整 */
+    .book-container:fullscreen .controls,
+    .book-container:-webkit-full-screen .controls {
+        bottom: 20px;
+        padding-bottom: 0;
+    }
+}
+
+/* Android Chrome専用調整 */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @supports not (-webkit-touch-callout: none) {
+        /* Android Chrome特有の調整 */
+        .page-image {
+            image-rendering: -webkit-optimize-contrast;
+        }
+    }
+}
+
+/* 高解像度ディスプレイ対応 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+    .page-image {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* フォールバック（古いブラウザ対応） */
+@supports not (height: env(safe-area-inset-top)) {
+    .book-container {
+        padding: 10px 5px;
+    }
+    
+    .page-image {
+        max-width: 47vw;
+        max-height: 85vh;
+    }
+}
+
+/* デバッグモード用スタイル */
+.debug-viewport .page-image {
+    border: 2px solid red !important;
+    box-sizing: border-box;
+}
+
+.debug-viewport .spread-container {
+    border: 2px solid blue !important;
+    box-sizing: border-box;
+}
+
+.debug-viewport .page-spread {
+    border: 1px solid green !important;
+    box-sizing: border-box;
+}
+
+/* アニメーション最適化 */
+@media (prefers-reduced-motion: reduce) {
+    .page-image,
+    .page-spread {
+        transition: none;
+    }
+}
+
+/* バッテリー節約モード対応 */
+@media (prefers-reduced-motion: reduce) {
+    .page-spread.slide-in-left,
+    .page-spread.slide-in-right {
+        animation: none;
+    }
+}
