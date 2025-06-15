@@ -1,12 +1,12 @@
 {
-  "name": "絵本リーダー",
-  "short_name": "絵本リーダー",
-  "description": "子供向け絵本を快適に読むためのモバイル特化リーダー",
+  "name": "📚 絵本本棚 - 子供向け読書アプリ",
+  "short_name": "絵本本棚",
+  "description": "子供向け絵本を本棚で管理し、見開き表示で快適に読書できるモバイル特化アプリ",
   "start_url": "./index.html",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "any",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#ff9800",
+  "background_color": "#f5f7fa",
   "scope": "./",
   "icons": [
     {

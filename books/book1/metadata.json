@@ -1,0 +1,19 @@
+{
+  "id": "book1",
+  "title": "いったもりのがっしゃん",
+  "description": "うしさんとくまさんが楽しく演奏する心温まる絵本",
+  "pages": [
+    "b1.png",
+    "b2.png",
+    "b3.png",
+    "b4.png"
+  ],
+  "totalPages": 4,
+  "thumbnail": "b1.png",
+  "author": "作者名",
+  "publishDate": "2024",
+  "category": "児童書",
+  "tags": ["音楽", "動物", "友情"],
+  "readingTime": "5分",
+  "ageRange": "3-8歳"
+}

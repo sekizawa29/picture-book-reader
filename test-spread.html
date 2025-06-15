@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見開きテスト</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .spread-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-spread {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .page-image {
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        .left-page {
+            max-width: 48vw;
+            border-right: 2px solid red; /* デバッグ用 */
+        }
+        
+        .right-page {
+            max-width: 48vw;
+            border-left: 2px solid blue; /* デバッグ用 */
+        }
+    </style>
+</head>
+<body>
+    <div class="spread-container">
+        <div class="page-spread">
+            <img class="page-image left-page" src="images/b1.png" alt="左ページ (1)">
+            <img class="page-image right-page" src="images/b2.png" alt="右ページ (2)">
+        </div>
+    </div>
+    
+    <script>
+        // テスト用のログ
+        window.addEventListener('load', () => {
+            console.log('テストページ読み込み完了');
+            
+            const leftImg = document.querySelector('.left-page');
+            const rightImg = document.querySelector('.right-page');
+            
+            leftImg.addEventListener('load', () => {
+                console.log('左ページ画像読み込み完了:', leftImg.src);
+            });
+            
+            rightImg.addEventListener('load', () => {
+                console.log('右ページ画像読み込み完了:', rightImg.src);
+            });
+            
+            leftImg.addEventListener('error', () => {
+                console.error('左ページ画像読み込み失敗:', leftImg.src);
+            });
+            
+            rightImg.addEventListener('error', () => {
+                console.error('右ページ画像読み込み失敗:', rightImg.src);
+            });
+        });
+    </script>
+</body>
+</html>

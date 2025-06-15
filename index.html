@@ -3,68 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
-    <title>絵本リーダー</title>
+    <title>📚 本棚 - 絵本リーダー</title>
     
     <!-- PWA設定 -->
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ff9800">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="絵本リーダー">
+    <meta name="apple-mobile-web-app-title" content="絵本本棚">
     <link rel="manifest" href="manifest.json">
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/mobile.css">
-    <link rel="stylesheet" href="css/fullscreen.css">
+    <link rel="stylesheet" href="css/library.css">
     
-    <!-- Preload first images -->
-    <link rel="preload" href="images/b1.png" as="image">
-    <link rel="preload" href="images/b2.png" as="image">
+    <!-- アイコンフォント（絵文字使用のため不要だが、将来的に追加可能） -->
 </head>
 <body>
-    <div id="app">
-        <!-- フルスクリーンボタン -->
-        <button id="fullscreenBtn" class="control-btn" title="全画面表示">📖</button>
+    <div id="app" class="library-app">
+        <!-- ヘッダー -->
+        <header class="library-header">
+            <div class="header-content">
+                <h1 class="library-title">
+                    <span class="library-icon">📚</span>
+                    <span class="title-text">本棚</span>
+                </h1>
+                <div class="header-stats" id="headerStats">
+                    <span class="stat-item">
+                        <span class="stat-icon">📖</span>
+                        <span id="totalBooks">0</span>冊
+                    </span>
+                </div>
+            </div>
+        </header>
         
-        <!-- メイン表示エリア -->
-        <div id="bookContainer" class="book-container">
-            <div id="bookReader" class="book-reader">
-                <!-- 見開き表示コンテナ -->
-                <div id="spreadContainer" class="spread-container">
-                    <div class="page-spread">
-                        <img id="leftPage" class="page-image left-page" src="images/b1.png" alt="左ページ">
-                        <img id="rightPage" class="page-image right-page" src="images/b2.png" alt="右ページ">
-                    </div>
+        <!-- 検索・フィルター -->
+        <div class="search-section" id="searchSection">
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="本のタイトルや作者で検索..." class="search-input">
+                    <button id="clearSearch" class="clear-search-btn" style="display: none;">✕</button>
                 </div>
             </div>
             
-            <!-- タッチ操作エリア -->
-            <div class="touch-area left-area" id="prevArea"></div>
-            <div class="touch-area right-area" id="nextArea"></div>
+            <!-- カテゴリフィルター -->
+            <div class="category-filters" id="categoryFilters">
+                <button class="category-btn active" data-category="all">
+                    <span class="category-icon">📚</span>すべて
+                </button>
+            </div>
         </div>
         
-        <!-- コントロールパネル -->
-        <div id="controls" class="controls">
-            <button id="prevBtn" class="nav-btn">◀</button>
-            <span id="pageInfo" class="page-info">1-2 / 4</span>
-            <button id="nextBtn" class="nav-btn">▶</button>
+        <!-- 最近読んだ本 -->
+        <section class="recent-section" id="recentSection" style="display: none;">
+            <h2 class="section-title">
+                <span class="section-icon">🕐</span>最近読んだ本
+            </h2>
+            <div class="recent-books" id="recentBooks"></div>
+        </section>
+        
+        <!-- 本棚メイン -->
+        <main class="library-main">
+            <section class="books-section">
+                <h2 class="section-title" id="booksTitle">
+                    <span class="section-icon">📖</span>すべての本
+                </h2>
+                
+                <!-- 読み込み中表示 -->
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <p>本を読み込み中...</p>
+                </div>
+                
+                <!-- 書籍グリッド -->
+                <div class="books-grid" id="booksGrid">
+                    <!-- 書籍カードが動的に挿入される -->
+                </div>
+                
+                <!-- 検索結果なし -->
+                <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results-icon">😔</div>
+                    <h3>本が見つかりません</h3>
+                    <p>検索条件を変更してお試しください</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- フローティングアクションボタン -->
+        <div class="fab-container">
+            <button class="fab" id="refreshBtn" title="本棚を更新">
+                <span class="fab-icon">🔄</span>
+            </button>
         </div>
         
-        <!-- 初回ヘルプ -->
-        <div id="helpOverlay" class="help-overlay">
-            <div class="help-content">
-                <h3>📖 使い方</h3>
-                <p>• 画面右半分をタップ → 次のページ</p>
-                <p>• 画面左半分をタップ → 前のページ</p>
-                <p>• 左右にスワイプでページめくり</p>
-                <p>• ピンチで文字を拡大・縮小</p>
-                <button id="hideHelp" class="help-btn">始める</button>
+        <!-- 統計情報モーダル -->
+        <div class="modal-overlay" id="statsModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📊 読書統計</h3>
+                    <button class="modal-close" id="closeStatsModal">✕</button>
+                </div>
+                <div class="modal-body" id="statsContent">
+                    <!-- 統計情報が動的に挿入される -->
+                </div>
             </div>
         </div>
     </div>
     
     <!-- JavaScript -->
-    <script src="js/mobile-reader.js"></script>
-    <script src="js/gesture.js"></script>
+    <script src="js/book-data.js"></script>
+    <script src="js/library.js"></script>
     <script src="js/pwa.js"></script>
 </body>
 </html>

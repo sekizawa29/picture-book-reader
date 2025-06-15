@@ -1,18 +1,23 @@
-// Service Worker for Book Reader PWA
-const CACHE_NAME = 'book-reader-v1';
+// Service Worker for Book Library PWA
+const CACHE_NAME = 'book-library-v2';
 const urlsToCache = [
     './',
     './index.html',
+    './reader.html',
     './manifest.json',
     './css/mobile.css',
     './css/fullscreen.css',
+    './css/library.css',
     './js/mobile-reader.js',
     './js/gesture.js',
     './js/pwa.js',
-    './images/b1.png',
-    './images/b2.png',
-    './images/b3.png',
-    './images/b4.png'
+    './js/library.js',
+    './js/book-data.js',
+    './books/book1/b1.png',
+    './books/book1/b2.png',
+    './books/book1/b3.png',
+    './books/book1/b4.png',
+    './books/book1/metadata.json'
 ];
 
 // インストール時にキャッシュ

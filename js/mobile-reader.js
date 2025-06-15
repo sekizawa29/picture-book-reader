@@ -2,14 +2,11 @@
 class MobileBookReader {
     constructor() {
         this.currentSpread = 1; // 見開きの番号 (1=ページ1-2, 2=ページ3-4)
+        this.bookId = null;
+        this.bookData = null;
         this.totalPages = 4;
         this.totalSpreads = 2; // 見開きの総数
-        this.pages = [
-            'images/b1.png',
-            'images/b2.png', 
-            'images/b3.png',
-            'images/b4.png'
-        ];
+        this.pages = [];
         
         this.isFullscreen = false;
         this.autoHideTimer = null;
@@ -21,10 +18,13 @@ class MobileBookReader {
         this.init();
     }
     
-    init() {
+    async init() {
+        this.parseUrlParameters();
         this.initElements();
         this.initEventListeners();
         this.initGestures();
+        
+        await this.loadBookData();
         this.preloadImages();
         this.updateSpread(); // 初期見開きを設定
         this.showHelp();
@@ -50,6 +50,104 @@ class MobileBookReader {
         this.hideHelpBtn = document.getElementById('hideHelp');
         this.prevArea = document.getElementById('prevArea');
         this.nextArea = document.getElementById('nextArea');
+        this.backToLibraryBtn = document.getElementById('backToLibraryBtn');
+    }
+    
+    parseUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        this.bookId = urlParams.get('book');
+        
+        if (!this.bookId) {
+            console.warn('書籍IDが指定されていません。デフォルト書籍を使用します。');
+            this.bookId = 'book1'; // デフォルト
+        }
+        
+        console.log('読み込む書籍ID:', this.bookId);
+    }
+    
+    async loadBookData() {
+        try {
+            // BookDataManagerの初期化を待つ
+            await this.waitForBookDataManager();
+            
+            // 書籍データを取得
+            this.bookData = window.bookDataManager.getBookById(this.bookId);
+            
+            if (!this.bookData) {
+                throw new Error(`書籍 ${this.bookId} が見つかりません`);
+            }
+            
+            // 書籍データを設定
+            this.totalPages = this.bookData.totalPages;
+            this.totalSpreads = Math.ceil(this.totalPages / 2);
+            this.pages = window.bookDataManager.getAllPageUrls(this.bookData);
+            
+            // ページタイトルを更新
+            document.title = `📖 ${this.bookData.title} - 絵本リーダー`;
+            
+            // 読書進捗を復元
+            this.restoreReadingProgress();
+            
+            console.log('書籍データ読み込み完了:', this.bookData);
+            
+        } catch (error) {
+            console.error('書籍データの読み込みエラー:', error);
+            this.showError('書籍の読み込みに失敗しました');
+            
+            // エラー時はデフォルト設定を使用
+            this.setDefaultBookData();
+        }
+    }
+    
+    async waitForBookDataManager() {
+        return new Promise((resolve) => {
+            const checkManager = () => {
+                if (window.bookDataManager && window.bookDataManager.books.length > 0) {
+                    resolve();
+                } else {
+                    setTimeout(checkManager, 100);
+                }
+            };
+            checkManager();
+        });
+    }
+    
+    setDefaultBookData() {
+        // フォールバック用のデフォルト設定
+        this.totalPages = 4;
+        this.totalSpreads = 2;
+        this.pages = [
+            'books/book1/b1.png',
+            'books/book1/b2.png',
+            'books/book1/b3.png',
+            'books/book1/b4.png'
+        ];
+        
+        this.bookData = {
+            id: 'book1',
+            title: 'デフォルト書籍',
+            totalPages: 4
+        };
+    }
+    
+    restoreReadingProgress() {
+        if (!this.bookData) return;
+        
+        const progress = window.bookDataManager.getReadingProgress(this.bookData.id);
+        if (progress && progress.currentSpread > 0) {
+            this.currentSpread = Math.min(progress.currentSpread, this.totalSpreads);
+            console.log('読書進捗を復元:', this.currentSpread);
+        }
+    }
+    
+    saveReadingProgress() {
+        if (!this.bookData || !window.bookDataManager) return;
+        
+        window.bookDataManager.saveReadingProgress(
+            this.bookData.id,
+            this.currentSpread,
+            this.totalSpreads
+        );
     }
     
     initEventListeners() {
@@ -57,6 +155,7 @@ class MobileBookReader {
         this.prevBtn.addEventListener('click', () => this.prevPage());
         this.nextBtn.addEventListener('click', () => this.nextPage());
         this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        this.backToLibraryBtn.addEventListener('click', () => this.backToLibrary());
         
         // タッチエリア
         this.prevArea.addEventListener('click', (e) => {
@@ -109,6 +208,7 @@ class MobileBookReader {
         if (this.currentSpread < this.totalSpreads) {
             this.currentSpread++;
             this.updateSpread('next');
+            this.saveReadingProgress();
         }
     }
     
@@ -116,6 +216,7 @@ class MobileBookReader {
         if (this.currentSpread > 1) {
             this.currentSpread--;
             this.updateSpread('prev');
+            this.saveReadingProgress();
         }
     }
     
@@ -454,6 +555,41 @@ class MobileBookReader {
         
         document.addEventListener('touchstart', handler, { once: true });
         document.addEventListener('click', handler, { once: true });
+    }
+    
+    backToLibrary() {
+        // 読書進捗を保存
+        this.saveReadingProgress();
+        
+        // 本棚に戻る
+        window.location.href = 'index.html';
+    }
+    
+    showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f44336;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 90vw;
+            text-align: center;
+        `;
+        errorDiv.textContent = message;
+        
+        document.body.appendChild(errorDiv);
+        
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 5000);
     }
 }
 
