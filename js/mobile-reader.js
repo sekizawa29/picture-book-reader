@@ -26,7 +26,7 @@ class MobileBookReader {
         this.initEventListeners();
         this.initGestures();
         this.preloadImages();
-        this.updatePageInfo();
+        this.updateSpread(); // 初期見開きを設定
         this.showHelp();
         
         // 初期化後に自動フルスクリーン（ユーザー操作後に実行される必要がある）
@@ -130,16 +130,20 @@ class MobileBookReader {
         const leftPageIndex = (this.currentSpread - 1) * 2;
         const rightPageIndex = leftPageIndex + 1;
         
+        console.log(`見開き ${this.currentSpread}: 左ページ=${leftPageIndex + 1}, 右ページ=${rightPageIndex + 1}`);
+        
         // 左ページ
         if (leftPageIndex < this.totalPages) {
             this.leftPageImg.src = this.pages[leftPageIndex];
             this.leftPageImg.alt = `ページ ${leftPageIndex + 1}`;
+            console.log(`左ページ設定: ${this.pages[leftPageIndex]}`);
         }
         
         // 右ページ
         if (rightPageIndex < this.totalPages) {
             this.rightPageImg.src = this.pages[rightPageIndex];
             this.rightPageImg.alt = `ページ ${rightPageIndex + 1}`;
+            console.log(`右ページ設定: ${this.pages[rightPageIndex]}`);
         }
         
         this.updatePageInfo();

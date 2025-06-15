@@ -109,18 +109,22 @@ body {
 }
 
 .left-page {
-    max-width: 50vw;
+    max-width: 49vw;
+    flex: 1;
+    border-right: 1px solid rgba(0,0,0,0.1); /* デバッグ用境界線 */
 }
 
 .right-page {
-    max-width: 50vw;
+    max-width: 49vw;
+    flex: 1;
+    border-left: 1px solid rgba(0,0,0,0.1); /* デバッグ用境界線 */
 }
 
 /* 横向き時の見開き最適化 */
 @media (orientation: landscape) {
-    .page-image {
+    .left-page, .right-page {
+        max-width: 48vw;
         max-height: 100vh;
-        max-width: 49vw;
     }
     
     .page-spread {
@@ -130,9 +134,9 @@ body {
 
 /* 縦向き時の調整 */
 @media (orientation: portrait) {
-    .page-image {
-        max-height: 85vh;
-        max-width: 48vw;
+    .left-page, .right-page {
+        max-width: 47vw;
+        max-height: 80vh;
     }
     
     .page-spread {
