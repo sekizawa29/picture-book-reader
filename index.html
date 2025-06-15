@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
+    <title>絵本リーダー</title>
+    
+    <!-- PWA設定 -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="絵本リーダー">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/fullscreen.css">
+    
+    <!-- Preload first images -->
+    <link rel="preload" href="images/b1.png" as="image">
+    <link rel="preload" href="images/b2.png" as="image">
+</head>
+<body>
+    <div id="app">
+        <!-- フルスクリーンボタン -->
+        <button id="fullscreenBtn" class="control-btn" title="全画面表示">📖</button>
+        
+        <!-- メイン表示エリア -->
+        <div id="bookContainer" class="book-container">
+            <div id="bookReader" class="book-reader">
+                <!-- 見開き表示コンテナ -->
+                <div id="spreadContainer" class="spread-container">
+                    <div class="page-spread">
+                        <img id="leftPage" class="page-image left-page" src="images/b1.png" alt="左ページ">
+                        <img id="rightPage" class="page-image right-page" src="images/b2.png" alt="右ページ">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- タッチ操作エリア -->
+            <div class="touch-area left-area" id="prevArea"></div>
+            <div class="touch-area right-area" id="nextArea"></div>
+        </div>
+        
+        <!-- コントロールパネル -->
+        <div id="controls" class="controls">
+            <button id="prevBtn" class="nav-btn">◀</button>
+            <span id="pageInfo" class="page-info">1-2 / 4</span>
+            <button id="nextBtn" class="nav-btn">▶</button>
+        </div>
+        
+        <!-- 初回ヘルプ -->
+        <div id="helpOverlay" class="help-overlay">
+            <div class="help-content">
+                <h3>📖 使い方</h3>
+                <p>• 画面右半分をタップ → 次のページ</p>
+                <p>• 画面左半分をタップ → 前のページ</p>
+                <p>• 左右にスワイプでページめくり</p>
+                <p>• ピンチで文字を拡大・縮小</p>
+                <button id="hideHelp" class="help-btn">始める</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="js/mobile-reader.js"></script>
+    <script src="js/gesture.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
